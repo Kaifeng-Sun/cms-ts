@@ -15,7 +15,7 @@ export default function Login() {
     }).then((result: any) => {
       const data = result.data.data;
       localStorage.setItem('cms', JSON.stringify(data))
-      router.push('/dashboard')
+      router.push('dashboard')
     }).catch((error: any) => {
       message.error('Please input right pwd')
     });
