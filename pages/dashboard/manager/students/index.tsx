@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Pagination, Button, Input } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import axios from "axios";
+import { formatDistanceToNow } from 'date-fns';
 
 interface Student {
   key: number;
@@ -52,6 +53,11 @@ const columns: ColumnsType<Student> = [
     title: "Student Type",
     dataIndex: "type",
     key: "col-type",
+    filters: [
+      {text: 'developer', value: 'developer'},
+      {text: 'tester', value: 'tester'},
+    ],
+    // onFilter: (value: string, record: Student) => record.type.name === value,
     render: (type)=>type?.name,
     width: 100,
   },
@@ -60,6 +66,7 @@ const columns: ColumnsType<Student> = [
     dataIndex: "createdAt",
     key: "col-jointime",
     width: 100,
+    render: (value:string) => formatDistanceToNow(new Date(value), {addSuffix: true})
   },
   {
     title: "Action",
