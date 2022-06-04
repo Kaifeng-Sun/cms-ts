@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Switch, Pagination } from "antd";
+import { Table, Pagination, Button, Input } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import axios from "axios";
 
@@ -52,7 +52,7 @@ const columns: ColumnsType<Student> = [
     title: "Student Type",
     dataIndex: "type",
     key: "col-type",
-    render: (type)=>type.name,
+    render: (type)=>type?.name,
     width: 100,
   },
   {
@@ -70,10 +70,13 @@ const columns: ColumnsType<Student> = [
   },
 ];
 
+const {Search} = Input;
+
 export default function Students() {
   const [data, setData] = useState([]);
   const [paginator, setPaginator] = useState({ limit: 20, page: 1 });
   const [total,setTotal] = useState(0);
+  const [name, setName] = useState('')
   let timer:any = null
   
   useEffect(() => {
@@ -81,25 +84,52 @@ export default function Students() {
     timer =setTimeout(()=>{
       getData();
     },0)
-  },[paginator])
+  },[paginator, name])
 
   const getData = () => {
     const localData = localStorage.getItem("cms");
     axios
     .get('http://cms.chtoma.com/api/students',{
-      params: paginator,
+      params: {
+        limit:paginator.limit,
+        page:paginator.page,
+        query:name
+      },
       headers: {Authorization: 'Bearer ' + JSON.parse(localData || "").token,}
     })
     .then((res)=>{
       const { data: {students, total}} = res.data;
       console.log(res);
       setData(students);
-      setTotal(total)
+      setTotal(total);
     })
+  }
+
+  const handlePaginationChange = (page:any,pageSize:any)=>{
+    if(paginator.limit !== pageSize){
+      setPaginator({limit:pageSize,page:1})
+    }else{
+      setPaginator({limit:pageSize,page:page})
+    }
+  }
+
+  const onSearch = (e: any)=>{
+    clearTimeout(timer);
+    timer =setTimeout(()=>{
+      setName(e)
+    },0)
   }
 
   return (
     <>
+      <div className="flex justify-between mb-6">
+        <Button type="primary">Add</Button>
+        <Search
+          placeholder="search by name"
+          onSearch = {onSearch}
+          style={{width:300}}
+        />
+      </div>
       <Table
         columns={columns}
         dataSource={data}
@@ -107,12 +137,12 @@ export default function Students() {
         sticky
       />
       <Pagination
-        defaultCurrent={1}
+        current={paginator.page}
         defaultPageSize={paginator.limit}
         total={total}
         style={{marginTop:'20px'}}
         showSizeChanger
-        onChange={(page,pageSize)=>{setPaginator({limit:pageSize,page:page})}}
+        onChange={handlePaginationChange}
       />
     </>
     
