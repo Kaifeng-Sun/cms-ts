@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Student } from '../../../../lib/model/student'
 
 export default function Students() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Student[]>([]);
   const [paginator, setPaginator] = useState({ limit: 20, page: 1 });
   const [total, setTotal] = useState(0);
   const [name, setName] = useState('');
