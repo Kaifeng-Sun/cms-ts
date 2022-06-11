@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Table, Pagination, Button, Input, Modal, Space, Typography, Popconfirm, Form, Select } from "antd";
+import { Table, Pagination, Button, Input, Modal, Space, Typography, Popconfirm, Form, Select, message } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import axios from "axios";
 import { formatDistanceToNow } from 'date-fns';
 import { Student } from '../../../../lib/model/student'
+import ModalForm from "../../../../components/common/modal-form";
 
 export default function Students() {
   const [data, setData] = useState<Student[]>([]);
@@ -13,24 +14,13 @@ export default function Students() {
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-
+  const [form] = Form.useForm();
   const { Search } = Input;
   const { Link } = Typography;
-  type SizeType = Parameters<typeof Form>[0]['size'];
-  const [componentSize, setComponentSize] = useState<SizeType | 'default'>('default');
   const studentType = [
     { text: 'developer', value: 'developer' },
     { text: 'tester', value: 'tester' },
   ]
-
-  const showPopconfirm = () => {
-    setVisible(true);
-  };
-
-  const handleCancel = () => {
-    console.log('Clicked cancel button');
-    setVisible(false);
-  };
 
   const columns: ColumnsType<Student> = [
     {
@@ -85,8 +75,10 @@ export default function Students() {
         <Space>
           <Link
             onClick={() => {
-              setEditingStudent(record)
+              form.resetFields()
               setVisible(true)
+              setEditingStudent(record)
+              console.log(editingStudent);
             }}
           >Edit</Link>
           <Popconfirm
@@ -123,12 +115,7 @@ export default function Students() {
   ];
 
   useEffect(() => {
-    // window.timer = null
-
-    // clearTimeout(timer);
-    // timer =setTimeout(()=>{
     getData(paginator, name);
-    // },0)
   }, [paginator, name])
 
   const getData = (paginator: any, name: string) => {
@@ -144,7 +131,6 @@ export default function Students() {
       })
       .then((res) => {
         const { data: { students, total } } = res.data;
-        console.log(res.data.data);
         setData(students);
         setTotal(total);
       }).catch((err) => {
@@ -164,38 +150,52 @@ export default function Students() {
     setName(e)
   }
 
-  const handleOk = (values:any)=>{
+  const onCreate = (values: any) => {
+    console.log('Received values of form: ', values);
+    console.log(editingStudent);
+
+    // setVisible(false);
     const localData = localStorage.getItem("cms");
-    console.log(values.name);
-    
-    !!editingStudent ? 
-    axios
-    .get('http://cms.chtoma.com/api/students', {
-      params: {
-        ...values
-      },
-      headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token }
-    })
-    .then((res) => {
-      setEditingStudent(null)
-    }).catch((err) => {
 
-    })
-    : 
-    axios
-    .get('http://cms.chtoma.com/api/students', {
-      params: {
+    !!editingStudent ?
+      axios
+        .put('http://cms.chtoma.com/api/students', {
+          ...values,
+          id: editingStudent.id,
+        }, {
+          headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token }
+        })
+        .then((res) => {
+          console.log(res);
+        }).catch((err) => {
+          message.error('Submit failed')
+        }).finally(() => {
+          setEditingStudent(null)
+          setVisible(false)
+        })
+      :
+      axios
+        .post('http://cms.chtoma.com/api/students', {
+            ...values
+          },
+          {headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token }}
+        )
+        .then((res) => {
+          console.log(res);
 
-      },
-      headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token }
-    })
-    .then((res) => {
-
-    }).catch((err) => {
-
-    })
-    
+        }).catch((err) => {
+          message.error('Submit failed')
+        }).finally(() => {
+          setEditingStudent(null)
+          setVisible(false)
+        })
   }
+
+  const onCancel = () => {
+    setVisible(false);
+    setEditingStudent(null);
+    console.log(editingStudent);
+  };
 
   return (
     <>
@@ -212,6 +212,7 @@ export default function Students() {
         columns={columns}
         dataSource={data}
         pagination={false}
+        rowKey="id"
         sticky
       />
 
@@ -224,53 +225,14 @@ export default function Students() {
         onChange={handlePaginationChange}
       />
 
-      <Modal
-        title={!!editingStudent ? 'Edit Student' : 'Add Student'}
+      <ModalForm
         visible={visible}
-        onOk={handleOk}
+        onCreate={onCreate}
+        onCancel={onCancel}
         confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-        okText="Submit"
-        
-      >
-        <Form
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 14 }}
-          layout="horizontal"
-          size={componentSize as SizeType}
-          requiredMark
-          initialValues={{
-            name: editingStudent?.name,
-            email: editingStudent?.email,
-            country: editingStudent?.country,
-            typeId: editingStudent?.type.id,
-          }}
-        >
-          <Form.Item label="Name:" name='name' required>
-            <Input />
-          </Form.Item>
-          <Form.Item label="Email:" name='email' required>
-            <Input />
-          </Form.Item>
-          <Form.Item label="Area" name='country' required>
-            <Select>
-              <Select.Option value="China">China</Select.Option>
-              <Select.Option value="New Zealand">New Zealand</Select.Option>
-              <Select.Option value="Canada">Canada</Select.Option>
-              <Select.Option value="Australia">Australia</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="Student Type:" name='typeId' required>
-            <Select>
-              {/* {studentType.map((type)=>{
-                <Select.Option value={type.value}>{type.text}</Select.Option>
-              })} */}
-              <Select.Option value={1}>Tester</Select.Option>
-              <Select.Option value={2}>Developer</Select.Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
+        editingStudent={editingStudent}
+        form={form}
+      />
     </>
 
   );
