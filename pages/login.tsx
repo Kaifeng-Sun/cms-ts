@@ -1,14 +1,16 @@
 import { Form, Input, Button, Radio, Checkbox, Row, Col, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import type { RadioChangeEvent } from 'antd';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
+import { LoginFormValues } from '../lib/model/login';
+import apiService from '../lib/services/api-service';
+import storage from '../lib/services/storage';
 
 export default function Login() {
   const router = useRouter();
   const axios = require('axios').default;
   const AES = require("crypto-js/aes")
 
-  const onFinish = async (values: { role: string, email: string, password: string }) => {
+  const onFinish = (values: { role: string, email: string, password: string }) => {
     axios.post('http://cms.chtoma.com/api/login', {
       ...values,
       password: AES.encrypt(values.password, 'cms').toString()
@@ -19,6 +21,15 @@ export default function Login() {
     }).catch((error: any) => {
       message.error('Please input right pwd')
     });
+  };
+  
+  const login = async (loginRequest: LoginFormValues) => {
+    const { data } = await apiService.login(loginRequest);
+
+    if (!!data) {
+      storage.setUserInfo(data);
+      router.push('dashboard');
+    }
   };
 
   return (
@@ -32,7 +43,7 @@ export default function Login() {
               remember: true,
               role: "student"
             }}
-            onFinish={onFinish}
+            onFinish={(values:LoginFormValues)=>login(values)}
           >
             <Form.Item name='role' rules={[{ required: true }]}>
               <Radio.Group>

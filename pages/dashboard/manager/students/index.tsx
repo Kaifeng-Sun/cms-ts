@@ -5,6 +5,7 @@ import axios from "axios";
 import { formatDistanceToNow } from 'date-fns';
 import { Student } from '../../../../lib/model/student'
 import ModalForm from "../../../../components/common/modal-form";
+import apiService from "../../../../lib/services/api-service";
 
 export default function Students() {
   const [data, setData] = useState<Student[]>([]);
@@ -118,24 +119,15 @@ export default function Students() {
     getData(paginator, name);
   }, [paginator, name])
 
-  const getData = (paginator: any, name: string) => {
-    const localData = localStorage.getItem("cms");
-    axios
-      .get('http://cms.chtoma.com/api/students', {
-        params: {
-          limit: paginator.limit,
-          page: paginator.page,
-          query: name
-        },
-        headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token }
-      })
-      .then((res) => {
-        const { data: { students, total } } = res.data;
-        setData(students);
-        setTotal(total);
-      }).catch((err) => {
+  const getData = async (paginator: any, name: string) => {
+    const { data } = await apiService.getStudents({
+      limit: paginator.limit,
+      page: paginator.page,
+      query: name
+    });
 
-      });
+    setData(data.students);
+    setTotal(data!.total);
   }
 
   const handlePaginationChange = (page: any, pageSize: any) => {
@@ -176,9 +168,9 @@ export default function Students() {
       :
       axios
         .post('http://cms.chtoma.com/api/students', {
-            ...values
-          },
-          {headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token }}
+          ...values
+        },
+          { headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token } }
         )
         .then((res) => {
           console.log(res);

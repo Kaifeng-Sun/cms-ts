@@ -14,10 +14,6 @@ interface ModalFormProps {
 export default function ModalForm(props: ModalFormProps) {
   const { form, editingStudent, visible, confirmLoading, onCancel, onCreate } = props
 
-  useEffect(()=>{
-    form.resetFields()
-  },[editingStudent])
-
   return (
     <Modal
       title={!!editingStudent ? 'Edit Student' : 'Add Student'}
@@ -30,13 +26,11 @@ export default function ModalForm(props: ModalFormProps) {
             onCreate(values);
           })
       }}
-      closable={false}
       onCancel={onCancel}
       okText={!!editingStudent ? 'Update' : 'Add'}
-      destroyOnClose={true}
+      destroyOnClose
     >
       <Form
-        form={form}
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
@@ -47,7 +41,6 @@ export default function ModalForm(props: ModalFormProps) {
           country: editingStudent?.country,
           typeId: editingStudent?.type?.id,
         }}
-      // preserve={false}
       >
         <Form.Item label="Name:" name='name' required>
           <Input />
