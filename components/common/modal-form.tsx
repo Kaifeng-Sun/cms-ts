@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Form, Input, Modal, Radio, Select } from 'antd';
 import { Student } from "../../lib/model/student"
-import { FormInstance, useForm } from 'antd/lib/form/Form';
+import { FormInstance } from 'antd/lib/form/Form';
 
 interface ModalFormProps {
   editingStudent: Student | null
@@ -9,11 +9,12 @@ interface ModalFormProps {
   confirmLoading: boolean
   onCreate: (student: Student) => void;
   onCancel: () => void;
-  form: FormInstance
+  form: FormInstance;
+  loading:boolean
 }
 
 export default function ModalForm(props: ModalFormProps) {
-  const { form,editingStudent, visible, confirmLoading, onCancel, onCreate } = props
+  const { form,editingStudent, visible, loading, onCancel, onCreate } = props
   return (
     <Modal
       title={!!editingStudent ? 'Edit Student' : 'Add Student'}
@@ -28,6 +29,7 @@ export default function ModalForm(props: ModalFormProps) {
       okText={!!editingStudent ? 'Update' : 'Add'}
       onCancel={onCancel}
       destroyOnClose
+      confirmLoading={loading}
     >
       <Form
         form={form}
@@ -39,7 +41,7 @@ export default function ModalForm(props: ModalFormProps) {
         <Form.Item label="Name:" name='name' required>
           <Input />
         </Form.Item>
-        <Form.Item label="Email:" name='email' required>
+        <Form.Item label="Email:" name='email' rules={[{ type: 'email' }]} required>
           <Input />
         </Form.Item>
         <Form.Item label="Area" name='country' required>

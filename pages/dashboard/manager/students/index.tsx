@@ -147,35 +147,35 @@ export default function Students() {
   }
 
   const onCreate = async (values: any) => {
-
+    setConfirmLoading(true)
     const localData = localStorage.getItem("cms");
-
+    console.log(values);
+    
     if (!!editingStudent) {
+      
       const editResponse = await apiService.updateStudent({
         ...values,
         id: editingStudent.id,
       })
-      console.log(editResponse);
+      
       if (!!editResponse.data) {
-        const index = data.findIndex((student) => student.id === editingStudent.id)
-        const updatedData = [...data]
-        updatedData.splice(index, 1)
-        setData(updatedData)
+        getData(paginator, name);
         setVisible(false)
       }
     } else {
       const addResponse = await apiService.addStudent(values)
+      console.log(addResponse);
       if (!!addResponse.data) {
         setVisible(false)
         setTotal(total + 1)
+        setVisible(false)
+        form.setFieldsValue({})
+        getData(paginator, name);
       }
     }
+    setConfirmLoading(false)
   }
 
-  const onCancel = () => {
-    setVisible(false);
-    setEditingStudent(null);
-  };
   return (
     <>
       <div className="flex justify-between mb-6">
@@ -207,10 +207,14 @@ export default function Students() {
       <ModalForm
         visible={visible}
         onCreate={onCreate}
-        onCancel={onCancel}
+        onCancel={() => {
+          setVisible(false);
+          setEditingStudent(null);
+        }}
         confirmLoading={confirmLoading}
         editingStudent={editingStudent}
         form={form}
+        loading={confirmLoading}
       />
     </>
 
