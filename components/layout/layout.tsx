@@ -16,10 +16,10 @@ import {
   FileAddOutlined,
   EditOutlined,
 } from '@ant-design/icons';
-import Router, { useRouter } from "next/router";
-import axios from "axios";
+import { useRouter } from "next/router";
 import apiService from '../../lib/services/api-service';
 import storage from '../../lib/services/storage';
+import Link from 'next/link';
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -28,12 +28,10 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
   const { children } = props;
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
-
-
-
+  const userRole = storage.role;
   const items2: MenuProps['items'] = [
     {
-      label: 'Overview',
+      label: <Link href={'/dashboard/'+userRole}>Ant Design</Link>,
       key: 'overview-sidebar',
       icon: React.createElement(DashboardOutlined)
     },
@@ -43,7 +41,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
       icon: React.createElement(SolutionOutlined),
       children: [
         {
-          label: 'Student List',
+          label: <Link href={'/dashboard/'+userRole+'/students'}>Student List</Link>,
           key: 'student-list-sidebar',
           icon: React.createElement(TeamOutlined),
         }

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Table, Pagination, Button, Input, Modal, Space, Typography, Popconfirm, Form, Select, message } from "antd";
+import { Table, Pagination, Button, Input, Space, Popconfirm, Form } from "antd";
 import type { ColumnsType } from "antd/lib/table";
-import axios from "axios";
 import { formatDistanceToNow } from 'date-fns';
 import { Student } from '../../../../lib/model/student'
 import ModalForm from "../../../../components/common/modal-form";
 import apiService from "../../../../lib/services/api-service";
+import Link from 'next/link';
+import Layout from "../../../../components/layout/layout";
 
 export default function Students() {
   const [data, setData] = useState<Student[]>([]);
@@ -17,7 +18,6 @@ export default function Students() {
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [form] = Form.useForm();
   const { Search } = Input;
-  const { Link } = Typography;
   const studentType = [
     { text: 'developer', value: 'developer' },
     { text: 'tester', value: 'tester' },
@@ -38,6 +38,9 @@ export default function Students() {
         const nextCode = next.name.charCodeAt(0);
         return preCode > nextCode ? 1 : preCode === nextCode ? 0 : -1;
       },
+      render:(_, record: Student)=>(
+        <Link href={`/dashboard/manager/students/${record.id}`}>{record.name}</Link>
+      )
     },
     {
       title: "Area",
@@ -74,12 +77,12 @@ export default function Students() {
       fixed: "right",
       render: (_, record: Student) => (
         <Space>
-          <Link
+          <a
             onClick={async () => {
               setVisible(true)
               setEditingStudent(record)
             }}
-          >Edit</Link>
+          >Edit</a>
           <Popconfirm
             title="Are you sure to delete?"
             onConfirm={async () => {
@@ -102,9 +105,9 @@ export default function Students() {
             }}
             okText="Confirm"
           >
-            <Link>
+            <a>
               Delete
-            </Link>
+            </a>
           </Popconfirm>
         </Space>
       ),
@@ -178,6 +181,7 @@ export default function Students() {
 
   return (
     <>
+    <Layout>
       <div className="flex justify-between mb-6">
         <Button type="primary" onClick={() => { setVisible(true) }}>Add</Button>
         <Search
@@ -216,6 +220,8 @@ export default function Students() {
         form={form}
         loading={confirmLoading}
       />
+    </Layout>
+      
     </>
 
   );
