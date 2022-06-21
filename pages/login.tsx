@@ -22,7 +22,7 @@ export default function Login() {
       message.error('Please input right pwd')
     });
   };
-  
+
   const login = async (loginRequest: LoginFormValues) => {
     const { data } = await apiService.login(loginRequest);
 
@@ -43,7 +43,7 @@ export default function Login() {
               remember: true,
               role: "student"
             }}
-            onFinish={(values:LoginFormValues)=>login(values)}
+            onFinish={(values: LoginFormValues) => login(values)}
           >
             <Form.Item name='role' rules={[{ required: true }]}>
               <Radio.Group>

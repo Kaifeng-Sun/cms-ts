@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Form, Input, Modal, Radio, Select } from 'antd';
 import { Student } from "../../lib/model/student"
+import { FormInstance, useForm } from 'antd/lib/form/Form';
 
 interface ModalFormProps {
   editingStudent: Student | null
@@ -8,12 +9,11 @@ interface ModalFormProps {
   confirmLoading: boolean
   onCreate: (student: Student) => void;
   onCancel: () => void;
-  form: any
+  form: FormInstance
 }
 
 export default function ModalForm(props: ModalFormProps) {
-  const { form, editingStudent, visible, confirmLoading, onCancel, onCreate } = props
-
+  const { form,editingStudent, visible, confirmLoading, onCancel, onCreate } = props
   return (
     <Modal
       title={!!editingStudent ? 'Edit Student' : 'Add Student'}
@@ -22,25 +22,19 @@ export default function ModalForm(props: ModalFormProps) {
         form
           .validateFields()
           .then((values: Student) => {
-            form.resetFields();
             onCreate(values);
           })
       }}
-      onCancel={onCancel}
       okText={!!editingStudent ? 'Update' : 'Add'}
+      onCancel={onCancel}
       destroyOnClose
     >
       <Form
+        form={form}
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
         requiredMark
-        initialValues={{
-          name: editingStudent?.name,
-          email: editingStudent?.email,
-          country: editingStudent?.country,
-          typeId: editingStudent?.type?.id,
-        }}
       >
         <Form.Item label="Name:" name='name' required>
           <Input />
@@ -58,9 +52,6 @@ export default function ModalForm(props: ModalFormProps) {
         </Form.Item>
         <Form.Item label="Student Type:" name='typeId' required>
           <Select>
-            {/* {studentType.map((type)=>{
-                <Select.Option value={type.value}>{type.text}</Select.Option>
-              })} */}
             <Select.Option value={1}>Tester</Select.Option>
             <Select.Option value={2}>Developer</Select.Option>
           </Select>

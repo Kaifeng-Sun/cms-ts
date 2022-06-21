@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import axios, { AxiosError } from 'axios';
-import { IResponse, QueryParams } from '../model/api';
+import { DeleteResponse, IResponse, QueryParams } from '../model/api';
 import { LoginRequest, LoginResponse } from '../model/login';
 import { RootPath } from './api-path';
 import storage from './storage';
@@ -117,22 +117,21 @@ class ApiService extends BaseApiService {
   getStudents(req?: StudentsRequest): Promise<IResponse<StudentsResponse>> {
     return this.get<IResponse<StudentsResponse>>(
       RootPath.students,
-      //什么意思？
       (req as unknown) as QueryParams
     );
   }
 
   addStudent(req: AddStudentRequest): Promise<IResponse<AddStudentResponse>> {
-    return this.post([RootPath.students], req).then(this.showMessage(true));
+    return this.post<IResponse<AddStudentResponse>>([RootPath.students], req).then(this.showMessage(true));
   }
 
   updateStudent(req: UpdateStudentRequest): Promise<IResponse<UpdateStudentResponse>> {
-    return this.put([RootPath.students], req).then(this.showMessage(true));
+    return this.put<IResponse<UpdateStudentResponse>>([RootPath.students], req).then(this.showMessage(true));
   }
 
-  // deleteStudent(id: number): Promise<IResponse<DeleteResponse>> {
-  //   return this.delete([RootPath.students, id]).then(this.showMessage(true));
-  // }
+  deleteStudent(id: number): Promise<IResponse<DeleteResponse>> {
+    return this.delete<IResponse<DeleteResponse>>([RootPath.students, id]).then(this.showMessage(true));
+  }
 }
 
 export const apiService = new ApiService();

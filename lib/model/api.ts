@@ -18,3 +18,5 @@ export interface ListResponse {
   total: number;
   paginator?: Paginator;
 }
+
+export type DeleteResponse = boolean;

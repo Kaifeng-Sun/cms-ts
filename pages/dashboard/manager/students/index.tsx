@@ -75,34 +75,30 @@ export default function Students() {
       render: (_, record: Student) => (
         <Space>
           <Link
-            onClick={() => {
-              form.resetFields()
+            onClick={async () => {
               setVisible(true)
               setEditingStudent(record)
-              console.log(editingStudent);
             }}
           >Edit</Link>
           <Popconfirm
             title="Are you sure to delete?"
-            onConfirm={() => {
-              const localData = localStorage.getItem("cms");
-              axios
-                .delete(
-                  'http://cms.chtoma.com/api/students/' + record.id,
-                  { headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token } }
-                )
-                .then((res) => {
-                  if (res.data) {
-                    const index = data.findIndex((student) => student.id === record.id)
-                    const updatedData = [...data]
-                    //remove the deleted record from data
-                    updatedData.splice(index, 1)
-                    setData(updatedData)
-                    setTotal(total - 1)
+            onConfirm={async () => {
+              const studentId: number = record.id
+              const deleteResponse = await apiService.deleteStudent(studentId);
+              if (!!deleteResponse.data) {
+                const index = data.findIndex((student) => student.id === record.id)
+                const updatedData = [...data]
+                updatedData.splice(index, 1)
+                setData(updatedData)
+                setTotal(total - 1)
+                if (data.length === 0) {
+                  const updatedPaginator = {
+                    limit: paginator.limit,
+                    page: paginator.page - 1
                   }
-                }).catch((err) => {
-
-                });
+                  setPaginator(updatedPaginator)
+                }
+              }
             }}
             okText="Confirm"
           >
@@ -116,18 +112,30 @@ export default function Students() {
   ];
 
   useEffect(() => {
+    form.setFieldsValue({
+      name: editingStudent?.name,
+      email: editingStudent?.email,
+      country: editingStudent?.country,
+      typeId: editingStudent?.type?.id,
+    })
+  }, [editingStudent])
+
+  useEffect(() => {
     getData(paginator, name);
   }, [paginator, name])
 
   const getData = async (paginator: any, name: string) => {
+
     const { data } = await apiService.getStudents({
       limit: paginator.limit,
       page: paginator.page,
       query: name
     });
 
-    setData(data.students);
-    setTotal(data!.total);
+    if (data) {
+      setData(data.students);
+      setTotal(data.total);
+    }
   }
 
   const handlePaginationChange = (page: any, pageSize: any) => {
@@ -138,64 +146,43 @@ export default function Students() {
     }
   }
 
-  const onSearch = (e: any) => {
-    setName(e)
-  }
+  const onCreate = async (values: any) => {
 
-  const onCreate = (values: any) => {
-    console.log('Received values of form: ', values);
-    console.log(editingStudent);
-
-    // setVisible(false);
     const localData = localStorage.getItem("cms");
 
-    !!editingStudent ?
-      axios
-        .put('http://cms.chtoma.com/api/students', {
-          ...values,
-          id: editingStudent.id,
-        }, {
-          headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token }
-        })
-        .then((res) => {
-          console.log(res);
-        }).catch((err) => {
-          message.error('Submit failed')
-        }).finally(() => {
-          setEditingStudent(null)
-          setVisible(false)
-        })
-      :
-      axios
-        .post('http://cms.chtoma.com/api/students', {
-          ...values
-        },
-          { headers: { Authorization: 'Bearer ' + JSON.parse(localData || "").token } }
-        )
-        .then((res) => {
-          console.log(res);
-
-        }).catch((err) => {
-          message.error('Submit failed')
-        }).finally(() => {
-          setEditingStudent(null)
-          setVisible(false)
-        })
+    if (!!editingStudent) {
+      const editResponse = await apiService.updateStudent({
+        ...values,
+        id: editingStudent.id,
+      })
+      console.log(editResponse);
+      if (!!editResponse.data) {
+        const index = data.findIndex((student) => student.id === editingStudent.id)
+        const updatedData = [...data]
+        updatedData.splice(index, 1)
+        setData(updatedData)
+        setVisible(false)
+      }
+    } else {
+      const addResponse = await apiService.addStudent(values)
+      if (!!addResponse.data) {
+        setVisible(false)
+        setTotal(total + 1)
+      }
+    }
   }
 
   const onCancel = () => {
     setVisible(false);
     setEditingStudent(null);
-    console.log(editingStudent);
   };
-
   return (
     <>
       <div className="flex justify-between mb-6">
         <Button type="primary" onClick={() => { setVisible(true) }}>Add</Button>
         <Search
           placeholder="search by name"
-          onSearch={onSearch}
+          onSearch={(e: any) => { setName(e) }}
           style={{ width: 300 }}
         />
       </div>

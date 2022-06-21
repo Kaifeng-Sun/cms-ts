@@ -30,7 +30,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
   const router = useRouter();
 
 
-  
+
   const items2: MenuProps['items'] = [
     {
       label: 'Overview',
@@ -85,25 +85,8 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
     }
   ]
 
-  const onLogOut = async() => {
-    // const localData = localStorage.getItem("cms");
-    // axios
-    //   .post(
-    //     "http://cms.chtoma.com/api/logout",
-    //     {},
-    //     {
-    //       headers: {
-    //         Authorization: 'Bearer ' + JSON.parse(localData || "").token,
-    //       },
-    //     }
-    //   )
-    //   .then(() => {
-    //     localStorage.removeItem('cms');
-    //     router.push('/')
-    //   })
-    //   .catch((error: any) => {
-    //     message.error('Logout failed' + error)
-    //   });
+  const onLogOut = async () => {
+
     const { data: isLogout } = await apiService.logout();
 
     if (isLogout) {
@@ -117,14 +100,14 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
   };
 
   const items1: MenuProps['items'] = [
-    { 
-      label: 
-      <a
-        onClick={onLogOut}
-      >
-        Log Out
-      </a>, 
-      key: 'logout' 
+    {
+      label:
+        <a
+          onClick={onLogOut}
+        >
+          Log Out
+        </a>,
+      key: 'logout'
     }
   ];
 
@@ -170,7 +153,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
             theme="dark"
             mode="horizontal"
             items={items1}
-            style={{width:'20%'}}
+            style={{ width: '20%' }}
           />
         </Header>
         <Layout style={{ padding: '0 24px 24px' }}>
