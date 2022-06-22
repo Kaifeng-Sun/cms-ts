@@ -7,8 +7,11 @@ import ModalForm from "../../../../components/common/modal-form";
 import apiService from "../../../../lib/services/api-service";
 import Link from 'next/link';
 import Layout from "../../../../components/layout/layout";
+import { useRouter } from "next/router";
+import Breadcrumb from "../../../../components/common/breadcrumb";
 
 export default function Students() {
+  const router = useRouter();
   const [data, setData] = useState<Student[]>([]);
   const [paginator, setPaginator] = useState({ limit: 20, page: 1 });
   const [total, setTotal] = useState(0);
@@ -18,6 +21,7 @@ export default function Students() {
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [form] = Form.useForm();
   const { Search } = Input;
+  const slug = router.pathname;
   const studentType = [
     { text: 'developer', value: 'developer' },
     { text: 'tester', value: 'tester' },
@@ -182,6 +186,7 @@ export default function Students() {
   return (
     <>
     <Layout>
+      <Breadcrumb slug={slug}/>
       <div className="flex justify-between mb-6">
         <Button type="primary" onClick={() => { setVisible(true) }}>Add</Button>
         <Search
