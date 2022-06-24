@@ -1,15 +1,14 @@
 import type { NextPage } from "next";
-import React from 'react';
-import AppLayout from "../../components/layout/layout";
-import Students from "../../pages/dashboard/manager/students"
+import { useRouter } from "next/router";
+import { useEffect } from 'react';
+import storage from "../../lib/services/storage";
 
 const Home: NextPage = () => {
-
-  return (
-    <AppLayout>
-      <Students/>
-    </AppLayout>
-  );
+  const router = useRouter()
+  useEffect(()=>{
+    router.push('/dashboard/' +  storage.role)
+  })
+  return null;
 };
 
 export default Home;

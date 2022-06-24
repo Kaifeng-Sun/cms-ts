@@ -5,7 +5,7 @@ import { LoginRequest, LoginResponse } from '../model/login';
 import { RootPath } from './api-path';
 import storage from './storage';
 import AES from "crypto-js/aes";
-import { AddStudentRequest, AddStudentResponse, StudentsRequest, StudentsResponse, UpdateStudentRequest, UpdateStudentResponse } from '../model/student';
+import { AddStudentRequest, AddStudentResponse, SearchStudentByIdRequest, Student, StudentsRequest, StudentsResponse, UpdateStudentRequest, UpdateStudentResponse } from '../model/student';
 
 const baseURL = 'http://cms.chtoma.com/api';
 const axiosInstance = axios.create({
@@ -131,6 +131,13 @@ class ApiService extends BaseApiService {
 
   deleteStudent(id: number): Promise<IResponse<DeleteResponse>> {
     return this.delete<IResponse<DeleteResponse>>([RootPath.students, id]).then(this.showMessage(true));
+  }
+
+  getStudentById(req?: SearchStudentByIdRequest): Promise<IResponse<Student>> {
+    return this.get<IResponse<Student>>(
+      RootPath.students,
+      (req as unknown) as QueryParams
+    );
   }
 }
 

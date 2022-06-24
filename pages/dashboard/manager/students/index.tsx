@@ -8,7 +8,7 @@ import apiService from "../../../../lib/services/api-service";
 import Link from 'next/link';
 import Layout from "../../../../components/layout/layout";
 import { useRouter } from "next/router";
-import Breadcrumb from "../../../../components/common/breadcrumb";
+import Breadcrumb from "../../../../components/common/breadcrumbs";
 
 export default function Students() {
   const router = useRouter();
@@ -186,7 +186,6 @@ export default function Students() {
   return (
     <>
     <Layout>
-      <Breadcrumb slug={slug}/>
       <div className="flex justify-between mb-6">
         <Button type="primary" onClick={() => { setVisible(true) }}>Add</Button>
         <Search
