@@ -5,7 +5,11 @@ import { LoginRequest, LoginResponse } from '../model/login';
 import { RootPath } from './api-path';
 import storage from './storage';
 import AES from "crypto-js/aes";
+<<<<<<< HEAD
 import { AddStudentRequest, AddStudentResponse, SearchStudentByIdRequest, Student, StudentResponse, StudentsRequest, StudentsResponse, UpdateStudentRequest, UpdateStudentResponse } from '../model/student';
+=======
+import { AddStudentRequest, AddStudentResponse, SearchStudentByIdRequest, Student, StudentsRequest, StudentsResponse, UpdateStudentRequest, UpdateStudentResponse } from '../model/student';
+>>>>>>> 08da4cc01e1b23942fb686dee5007a4b5fb64fa9
 
 const baseURL = 'http://cms.chtoma.com/api';
 const axiosInstance = axios.create({

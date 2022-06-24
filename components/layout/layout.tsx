@@ -33,7 +33,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
   const userRole = storage.role || (router.pathname.split('/')[2] as Role);
   const items2: MenuProps['items'] = [
     {
-      label: <Link href={'/dashboard'}>Overview</Link>,
+      label: <Link href={'/dashboard/' + userRole}>Overview</Link>,
       key: 'overview-sidebar',
       icon: React.createElement(DashboardOutlined)
     },
@@ -44,6 +44,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
       children: [
         {
           label: <Link href={'/dashboard/'+ userRole + '/students'}>Student List</Link>,
+
           key: 'student-list-sidebar',
           icon: React.createElement(TeamOutlined),
         }

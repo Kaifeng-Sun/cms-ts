@@ -8,8 +8,6 @@ import storage from "../../../../lib/services/storage";
 import apiService from "../../../../lib/services/api-service";
 import { Student, StudentResponse } from "../../../../lib/model/student";
 
-
-
 export default function Page() {
   const router = useRouter();
   const { id } = router.query;
@@ -126,7 +124,6 @@ export default function Page() {
             </Col>
           </Row>
         </div>
-
       </Layout>
     </>
   );

@@ -6,6 +6,7 @@ import storage from "../../lib/services/storage";
 
 export default function Breadcrumbs() {
   const router = useRouter();
+  const slug = router.asPath
   const generateBreadCrumbs = () => {
     // Remove any query parameters, as those aren't included in breadcrumbs
     const asPathWithoutQuery = router.asPath.split("?")[0];
@@ -31,6 +32,7 @@ export default function Breadcrumbs() {
     })
 
     // Add in a default "Home" crumb for the top-level
+
     return (storage.role || (router.pathname.split('/')[2] as Role) === 'manager')
     ?
     [{ href: "/", text: "CMS MANAGER SYSTEM", isLast:false },...crumbList]
