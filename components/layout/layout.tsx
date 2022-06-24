@@ -8,7 +8,7 @@ import {
   ProjectOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, message, Breadcrumb, Button } from "antd";
+import { Layout, Menu, message, Button } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -20,6 +20,8 @@ import { useRouter } from "next/router";
 import apiService from '../../lib/services/api-service';
 import storage from '../../lib/services/storage';
 import Link from 'next/link';
+import Breadcrumbs from '../common/breadcrumbs';
+import { Role } from '../../lib/model/role';
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -28,10 +30,10 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
   const { children } = props;
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
-  const userRole = storage.role;
+  const userRole = storage.role || (router.pathname.split('/')[2] as Role);
   const items2: MenuProps['items'] = [
     {
-      label: <Link href={'/dashboard/'+userRole}>Ant Design</Link>,
+      label: <Link href={'/dashboard'}>Overview</Link>,
       key: 'overview-sidebar',
       icon: React.createElement(DashboardOutlined)
     },
@@ -41,7 +43,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
       icon: React.createElement(SolutionOutlined),
       children: [
         {
-          label: <Link href={'/dashboard/'+userRole+'/students'}>Student List</Link>,
+          label: <Link href={'/dashboard/'+ userRole + '/students'}>Student List</Link>,
           key: 'student-list-sidebar',
           icon: React.createElement(TeamOutlined),
         }
@@ -154,12 +156,12 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
             style={{ width: '20%' }}
           />
         </Header>
-        <Layout style={{ padding: '0 24px 24px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-          </Breadcrumb>
+        <Layout
+          style={{
+            padding: '0 24px 24px',
+            marginTop: '70px'
+          }}>
+          <Breadcrumbs />
           <Content
             className="site-layout-background"
             style={{
@@ -168,6 +170,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
               minHeight: 280,
             }}
           >
+
             {children}
           </Content>
 
