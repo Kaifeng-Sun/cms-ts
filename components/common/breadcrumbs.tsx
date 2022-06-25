@@ -11,11 +11,9 @@ export default function Breadcrumbs() {
     // Remove any query parameters, as those aren't included in breadcrumbs
     const asPathWithoutQuery = router.asPath.split("?")[0];
 
-    // Break down the path between "/"s, removing empty entities
-    // Ex:"/my/nested/path" --> ["my", "nested", "path"]
     const asPathNestedRoutes = asPathWithoutQuery.split("/")
       .filter(v => v.length > 0)
-      .filter(v => { return v !== 'manager' && 'teacher' && 'student' });
+      .filter(v => v !== 'manager' && v !== 'teacher' && v !== 'student' );
 
     // Iterate over the list of nested route parts and build
     // a "crumb" object for each one.
@@ -24,9 +22,9 @@ export default function Breadcrumbs() {
       // by joining together the path parts up to this point.
       const href = "/" + asPathNestedRoutes.slice(0, idx + 1).join("/");
       // The title will just be the route string for now
-      const text = (idx === asPathNestedRoutes.length - 1 && !isNaN(+subpath)) 
-      ? 'Detail' 
-      : subpath[0].toUpperCase() + subpath.substr(1);
+      const text = (idx === asPathNestedRoutes.length - 1 && !isNaN(+subpath))
+        ? 'Detail'
+        : subpath[0].toUpperCase() + subpath.substr(1);
       const isLast = (idx === asPathNestedRoutes.length - 1) ? true : false
       return { href, text, isLast };
     })
@@ -34,10 +32,10 @@ export default function Breadcrumbs() {
     // Add in a default "Home" crumb for the top-level
 
     return (storage.role || (router.pathname.split('/')[2] as Role) === 'manager')
-    ?
-    [{ href: "/", text: "CMS MANAGER SYSTEM", isLast:false },...crumbList]
-    :
-    [{ href: "/", text: "CMS DASHBOARD", isLast:false },...crumbList]
+      ?
+      [{ href: "/", text: "CMS MANAGER SYSTEM", isLast: false }, ...crumbList]
+      :
+      [{ href: "/", text: "CMS DASHBOARD", isLast: false }, ...crumbList]
   }
   return (
     <Breadcrumb>

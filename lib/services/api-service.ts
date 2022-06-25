@@ -2,14 +2,21 @@ import { message } from 'antd';
 import axios, { AxiosError } from 'axios';
 import { DeleteResponse, IResponse, QueryParams } from '../model/api';
 import { LoginRequest, LoginResponse } from '../model/login';
-import { RootPath } from './api-path';
+import { RootPath, SubPath } from './api-path';
 import storage from './storage';
 import AES from "crypto-js/aes";
-<<<<<<< HEAD
-import { AddStudentRequest, AddStudentResponse, SearchStudentByIdRequest, Student, StudentResponse, StudentsRequest, StudentsResponse, UpdateStudentRequest, UpdateStudentResponse } from '../model/student';
-=======
-import { AddStudentRequest, AddStudentResponse, SearchStudentByIdRequest, Student, StudentsRequest, StudentsResponse, UpdateStudentRequest, UpdateStudentResponse } from '../model/student';
->>>>>>> 08da4cc01e1b23942fb686dee5007a4b5fb64fa9
+import { 
+  AddStudentRequest, 
+  AddStudentResponse, 
+  Student, 
+  StudentResponse, 
+  StudentsRequest, 
+  StudentsResponse, 
+  UpdateStudentRequest, 
+  UpdateStudentResponse 
+} from '../model/student';
+import { Statistic, StatisticsOverviewResponse, StatisticsResponse, StatisticsType } from '../model/statistics';
+import { ClassSchedule } from '../model/courses';
 
 const baseURL = 'http://cms.chtoma.com/api';
 const axiosInstance = axios.create({
@@ -140,6 +147,29 @@ class ApiService extends BaseApiService {
   getStudentById(id:number): Promise<IResponse<StudentResponse>> {
     // return this.get<IResponse<Student>>[RootPath.students, id]
     return this.get<IResponse<Student>>([RootPath.students, id]).then(this.showMessage());
+  }
+
+  getStatisticsOverview(): Promise<IResponse<StatisticsOverviewResponse>> {
+    return this.get<IResponse<StatisticsOverviewResponse>>([
+      RootPath.statistics,
+      SubPath.overview,
+    ]).then(this.showMessage());
+  }
+
+  getStatistics<T, U = Statistic>(
+    type: StatisticsType,
+    userId?: number
+  ): Promise<IResponse<StatisticsResponse<T, U>>> {
+    return this.get<IResponse<StatisticsResponse<T, U>>>(
+      [RootPath.statistics, type],
+      !!userId ? { userId } : {}
+    ).then(this.showMessage());
+  }
+
+  getClassSchedule(userId: number): Promise<IResponse<ClassSchedule[]>> {
+    return this.get<IResponse<ClassSchedule[]>>([RootPath.class, SubPath.schedule], {
+      userId,
+    }).then(this.showMessage());
   }
 }
 

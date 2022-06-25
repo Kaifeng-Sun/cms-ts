@@ -4,6 +4,21 @@ export interface CourseShort {
   courseId: number;
 }
 
+export interface Schedule {
+  id: number;
+  status: number;
+  current: number;
+  chapters: Chapter[];
+  classTime: string[];
+}
+
+export interface Chapter {
+  name: string;
+  id: number;
+  content: string;
+  order: number;
+}
+
 export interface Course {
   id: number;
   name: string;
@@ -31,4 +46,8 @@ type DurationUnit = 1 | 2 | 3 | 4 | 5;
 export interface CourseType {
   id: number;
   name: string;
+}
+
+export interface ClassSchedule extends Course {
+  schedule: Schedule;
 }

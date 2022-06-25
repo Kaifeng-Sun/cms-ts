@@ -37,3 +37,7 @@ a {
   margin: 16px;
   background: rgba(255, 255, 255, 0.3);
 }
+
+.overview-charts .ant-card {
+  padding: 8px 3px;
+}

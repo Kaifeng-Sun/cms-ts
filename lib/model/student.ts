@@ -24,10 +24,6 @@ export interface StudentsRequest extends Paginator {
   userId?: number;
 }
 
-export interface SearchStudentByIdRequest {
-  id: string;
-}
-
 export interface StudentsResponse extends ListResponse {
   students: Student[];
 }

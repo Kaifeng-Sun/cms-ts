@@ -1,1 +1,6 @@
-export type Role = 'student' | 'teacher' | 'manager';
+export enum Role {
+    student = 'student',
+    teacher = 'teacher',
+    manager = 'manager',
+  }
+  
