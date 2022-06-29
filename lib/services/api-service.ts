@@ -171,6 +171,12 @@ class ApiService extends BaseApiService {
       userId,
     }).then(this.showMessage());
   }
+
+  getWorld = async () => {
+    return await axios.get(
+      'https://code.highcharts.com/mapdata/custom/world-palestine-highres.geo.json'
+    );
+  };
 }
 
 export const apiService = new ApiService();
