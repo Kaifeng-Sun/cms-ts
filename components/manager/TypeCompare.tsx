@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 export default function TypeCompareChart(props: any) {
   const { data, title } = props
-  const [pieData, setPieData] = useState<any>()
+  // const [pieData, setPieData] = useState<any>()
   const [options, setOptions] = useState<any>({
     chart: {
       plotBackgroundColor: null,
@@ -35,7 +35,7 @@ export default function TypeCompareChart(props: any) {
     },
     exporting: {
       enabled: false,
-    },
+    }
   })
 
   useEffect(() => {
@@ -43,28 +43,30 @@ export default function TypeCompareChart(props: any) {
       return;
     }
 
+   let pieData
+
     if (title !== 'Gender') {
-      const newPieData = data.map((item: any) =>
+      pieData = data.map((item: any) =>
       ({
         name: item.name,
         y: item.amount,
       }))
-      setPieData(newPieData)
-    } 
-    else{
-      console.log(data.gender);
-      
-      const newPieData = Object.entries(data.gender).map(([name,amount]) => ({
-        name: name,
-        y:amount
-      }))
-      setPieData(newPieData)
     }
-
+    else {
+      console.log(data.gender);
+      pieData = Object.entries(data.gender).map(([name, amount]) => ({
+        name: name,
+        y: amount
+      }))
+    }
 
     setOptions({
       title: {
         text: title
+      },
+      subtitle: {
+        text: `${title.split(' ')[0]} total: ${pieData.reduce((acc:any, cur:any) => acc + cur.y, 0)}`,
+        align: 'right',
       },
       series: [{
         name: 'Percentage',
@@ -73,7 +75,7 @@ export default function TypeCompareChart(props: any) {
       }]
 
     })
-  }, [title, data, pieData])
+  }, [title, data])
   return (
     <HighchartsReact
       highcharts={Highcharts}

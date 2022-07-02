@@ -74,7 +74,7 @@ export default function DistributionChart(props: any) {
       ],
     };
 
-    setOptions(options);
+    setOptions(options);    
   }, [data, title, world]);
 
   return (

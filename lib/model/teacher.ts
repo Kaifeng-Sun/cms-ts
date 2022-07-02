@@ -8,6 +8,7 @@ export interface Teacher {
   profileId: number;
   email: string;
   ctime: string;
+  createdAt?:string
   updateAt: string;
 }
 

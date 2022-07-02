@@ -36,6 +36,7 @@ export interface Course {
   teacherId: number;
   type: CourseType[];
   ctime: string;
+  createdAt?:string
   scheduleId: number;
 }
 

@@ -9,6 +9,7 @@ export interface Student<T = CourseShort> {
     courses: T[];
     type: {id:string,name:string};
     ctime: string;
+    createdAt?:string;
     updateAt: string;
   }
 

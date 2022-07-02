@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import React, { useEffect, useState } from 'react';
 import AppLayout from "../../../components/layout/layout";
+import { DeploymentUnitOutlined, ReadOutlined, SolutionOutlined } from '@ant-design/icons';
 import Students from "../../../pages/dashboard/manager/students"
 import { Card, Col, Row, Select } from "antd";
 import IncrementChart from "../../../components/manager/Increment";
@@ -13,6 +14,8 @@ import { Teacher, TeacherProfile } from "../../../lib/model/teacher";
 import { Role } from "../../../lib/model/role";
 import { Course, Schedule } from "../../../lib/model/courses";
 import dynamic from "next/dynamic";
+import OverviewCard from "../../../components/manager/OverviewCard";
+import HeatChart from "../../../components/manager/HeatChart";
 
 type StudentStatistics = StatisticsResponse<StudentWithProfile>;
 
@@ -34,34 +37,35 @@ const Home: NextPage = () => {
   const [selectedType, setSelectedType] = useState<string>('Student Type');
 
   useEffect(() => {
-    apiService.getStatisticsOverview().then((res) => {
-      const { data } = res;
-      if (data) {
-        setOverview(data);
-        console.log(data);
+    // apiService.getStatisticsOverview().then((res) => {
+    //   const { data } = res;
+    //   if (data) {
+    //     setOverview(data);
+    //     console.log(data);
+    //   }
+    // });
 
-      }
-    });
+    // apiService.getStatistics<StudentWithProfile>(Role.student).then((res) => {
+    //   const { data } = res;
+    //   if (data) {
+    //     setStudentStatistics(data);
+    //     console.log(data);
+    //   }
+    // });
 
-    apiService.getStatistics<StudentWithProfile>(Role.student).then((res) => {
-      const { data } = res;
-      if (data) {
-        setStudentStatistics(data);
-        console.log(data);
-      }
-    });
-
-    apiService.getStatistics<TeacherProfile & Teacher>(Role.teacher).then((res) => {
-      const { data } = res;
-      if (data) {
-        setTeacherStatistics(data);
-      }
-    });
+    // apiService.getStatistics<TeacherProfile & Teacher>(Role.teacher).then((res) => {
+    //   const { data } = res;
+    //   if (data) {
+    //     setTeacherStatistics(data);
+    //     console.log(data);
+    //   }
+    // });
 
     apiService.getStatistics<Course & Schedule, CourseClassTimeStatistic>('course').then((res) => {
       const { data } = res;
       if (data) {
         setCourseStatistics(data);
+        console.log(data);
       }
     });
   }, [])
@@ -69,20 +73,28 @@ const Home: NextPage = () => {
   return (
     <AppLayout>
       <div className="overview-container bg-white">
-        <Row>
-          <Col span={8}>
-
-          </Col>
-          <Col span={8}>
-
-          </Col>
-          <Col span={8}>
-
-          </Col>
+        <Row align="middle" gutter={[24, 16]}>
+          <OverviewCard
+            data={overview?.student}
+            style={{ background: '#1890ff' }}
+            title='COURSES'
+            icon={<ReadOutlined />}
+          />
+          <OverviewCard
+            data={overview?.teacher}
+            style={{ background: '#9254de' }}
+            title='COURSES'
+            icon={<DeploymentUnitOutlined />}
+          />
+          <OverviewCard
+            data={overview?.course}
+            style={{ background: '#faad14' }}
+            title='COURSES'
+            icon={<SolutionOutlined />}
+          />
         </Row>
 
         <Row style={{ margin: "-8px -3px -3px" }}>
-
           <Col span={12} className="overview-charts">
             <Card
               title="Distribution"
@@ -138,19 +150,35 @@ const Home: NextPage = () => {
 
           <Col span={12} className="overview-charts">
             <Card title="Increment">
-              <IncrementChart data={chartOptions} />
+              <IncrementChart
+                studentData={studentStatistics?.createdAt}
+                teacherData={teacherStatistics?.createdAt}
+                courseData={courseStatistics?.createdAt}
+              />
             </Card>
 
           </Col>
           <Col span={12} className="overview-charts">
             <Card title="Languages">
-              <LanguagesChart data={chartOptions} />
+              <LanguagesChart
+                data={{
+                  interest: studentStatistics?.interest as Statistic[],
+                  teacher: teacherStatistics?.skills as Statistic[],
+                }} />
             </Card>
           </Col>
         </Row>
       </div>
-
-      {/* <button onClick={updateSeries}>Update Series</button> */}
+      <Row gutter={[24, 16]}>
+        <Col span={24}>
+          <Card title="Course Schedule">
+            <HeatChart
+              data={courseStatistics?.classTime as CourseClassTimeStatistic[]}
+              title="Course schedule per weekday"
+            />
+          </Card>
+        </Col>
+      </Row>
     </AppLayout>
   );
 };
