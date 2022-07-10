@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from "next/head";
 import {
   DashboardOutlined,
@@ -16,75 +16,66 @@ import {
   FileAddOutlined,
   EditOutlined,
 } from '@ant-design/icons';
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import apiService from '../../lib/services/api-service';
 import storage from '../../lib/services/storage';
 import Link from 'next/link';
 import Breadcrumbs from '../common/breadcrumbs';
 import { Role } from '../../lib/model/role';
+import { routes, SideBarItem } from '../../lib/constant/routes';
+import { getActiveKey } from '../../lib/util/side-nav';
+import { useUserRole } from '../custom-hooks/login-state';
 
 const { Header, Content, Sider, Footer } = Layout;
 
 
+function renderMenuItems(data: SideBarItem[], parent = '') {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const userRole = useUserRole();
+  return data.map((item, index) => {
+    const key = `${item.label}_${index}`
+
+    if (item.subMenu) {
+      return (
+        <Menu.SubMenu key={key} title={item.label} icon={item.icon}>
+          {renderMenuItems(item.subMenu, item.path.join('/'))}
+        </Menu.SubMenu>
+      );
+    }
+     else {
+      return item.hide ? null : (
+        <Menu.Item key={key} title={item.label} icon={item.icon}>
+          {!!item.path.length || item.label.toLocaleLowerCase() === 'overview' ? (
+            <Link href={['/dashboard', userRole, parent, ...item.path].join('/')}>
+              {item.label}
+            </Link>
+          ) : (
+            item.label
+          )}
+        </Menu.Item>
+      );
+    }
+  });
+}
+
+const getMenuConfig = (
+  data: SideBarItem[]
+): { defaultSelectedKeys: string[]; defaultOpenKeys: string[] } => {
+  const key = getActiveKey(data);
+  const defaultSelectedKeys = [key.split('/').pop()] as string[];
+  const defaultOpenKeys = key.split('/').slice(0, -1);
+
+  return { defaultSelectedKeys, defaultOpenKeys };
+};
+
 export default function AppLayout(props: React.PropsWithChildren<any>) {
   const { children } = props;
-  const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
-  const userRole = storage.role || (router.pathname.split('/')[2] as Role);
-  const items2: MenuProps['items'] = [
-    {
-      label: <Link href={'/dashboard/' + userRole}>Overview</Link>,
-      key: 'overview-sidebar',
-      icon: React.createElement(DashboardOutlined)
-    },
-    {
-      label: 'Student',
-      key: 'student-sidebar',
-      icon: React.createElement(SolutionOutlined),
-      children: [
-        {
-          label: <Link href={'/dashboard/'+ userRole + '/students'}>Student List</Link>,
-
-          key: 'student-list-sidebar',
-          icon: React.createElement(TeamOutlined),
-        }
-      ]
-    },
-    {
-      label: 'Teacher',
-      key: 'teacher-sidebar',
-      icon: React.createElement(DeploymentUnitOutlined),
-      children: [
-        {
-          label: 'Teacher List',
-          key: 'teacher-list-sidebar',
-          icon: React.createElement(TeamOutlined)
-        }
-      ]
-    },
-    {
-      label: 'Course',
-      key: 'course-sidebar',
-      icon: React.createElement(ReadOutlined),
-      children: [
-        {
-          label: 'All Course',
-          key: 'all-course-sidebar',
-          icon: React.createElement(ProjectOutlined)
-        },
-        {
-          label: 'Add Course',
-          key: 'add-course-sidebar',
-          icon: React.createElement(FileAddOutlined)
-        },
-        {
-          label: 'Edit Course',
-          key: 'edit-course-sidebar',
-          icon: React.createElement(EditOutlined)
-        },
-      ]
-    }
-  ]
+  const userRole = useUserRole();
+  const sideMenu = routes.get(userRole) as SideBarItem[];
+  const menuItems = renderMenuItems(sideMenu);
+  const [collapsed, toggleCollapse] = useState(false);
+  const { defaultOpenKeys, defaultSelectedKeys } = getMenuConfig(sideMenu);
 
   const onLogOut = async () => {
 
@@ -97,7 +88,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
   }
 
   const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
+    toggleCollapse(!collapsed);
   };
 
   const items1: MenuProps['items'] = [
@@ -123,24 +114,17 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
       <Sider
         collapsible
         collapsed={collapsed}
-        onCollapse={value => setCollapsed(value)}
-        style={{
-          overflow: "auto",
-          height: "100vh",
-          position: "sticky",
-          top: 0,
-          left: 0
-        }}
+        onCollapse={(isCollapsed) => toggleCollapse(isCollapsed)}
       >
         <div className="logo" />
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['sub1']}
-
-          items={items2}
-        />
+          defaultOpenKeys={defaultOpenKeys}
+          defaultSelectedKeys={defaultSelectedKeys}
+        >
+          {menuItems}
+        </Menu>
       </Sider>
 
       <Layout>

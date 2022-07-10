@@ -119,6 +119,8 @@ export default function Students() {
   ];
 
   useEffect(() => {
+    console.log(router);
+    
     form.setFieldsValue({
       name: editingStudent?.name,
       email: editingStudent?.email,

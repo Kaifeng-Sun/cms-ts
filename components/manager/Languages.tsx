@@ -65,6 +65,7 @@ export default function LanguagesChart({ data }: BarChartProps) {
       ...interest.map(({ name }) => name),
       ...Object.keys(teacher),
     ]);
+
     const interestItem: ISeriesItem = xCategories.reduce(
       (acc, language) => {
         const target = interest.find((item) => item.name === language);
@@ -72,17 +73,20 @@ export default function LanguagesChart({ data }: BarChartProps) {
         acc.data.push(value);
         return acc;
       },
-      { name: 'Interest', stack: 'interest', data: [] }
+      //init obj acc
+      { name: 'Interest', stack: 'interest', data: [] as number[] }
     );
+    
     const levels = uniq(
       Object.values(teacher)
         .flat()
         .map((item) => item.level)
     ).sort();
-    const teacherBar: ISeriesItem[] = levels.map((level: string | number) => ({
-      name: SkillDes[+level],
+
+    const teacherBar: ISeriesItem[] = levels.map((level) => ({
+      name: SkillDes[level],
       data: xCategories.map(
-        (lan) => teacher[+lan]?.find((item: Statistic) => item.level === level)?.amount || 0
+        (language:string) => teacher[language]?.find((item: Statistic) => item.level === level)?.amount || 0
       ),
       stack: 'teacher',
     }));
@@ -99,7 +103,7 @@ export default function LanguagesChart({ data }: BarChartProps) {
         },
         categories: xCategories,
       },
-      series: [...teacherBar, interestItem],
+      series: [interestItem,...teacherBar],
     });
   }, [data]);
 

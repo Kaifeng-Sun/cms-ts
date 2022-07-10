@@ -56,18 +56,18 @@ export default function HeatChart(props: any) {
     },
   });
 
-  const charRef = useRef<any>(null);
+  // const charRef = useRef<any>(null);
 
-  useEffect(() => {
-    const { chart } = charRef.current;
-    const timer = setTimeout(() => {
-      chart.reflow();
-    }, 30);
+  // useEffect(() => {
+  //   const { chart } = charRef.current;
+  //   const timer = setTimeout(() => {
+  //     chart.reflow();
+  //   }, 30);
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (!data) {
@@ -127,9 +127,9 @@ export default function HeatChart(props: any) {
         },
       ],
     });
-  }, [data]);
+  }, [data, title]);
 
   return (
-    <HighchartsReact highcharts={Highcharts} options={options} ref={charRef}></HighchartsReact>
+    <HighchartsReact highcharts={Highcharts} options={options}></HighchartsReact>
   )
 }

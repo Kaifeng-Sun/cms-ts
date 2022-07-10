@@ -1,56 +1,75 @@
 import { Breadcrumb } from "antd";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
+import { routes, SideBarItem } from "../../lib/constant/routes";
 import { Role } from "../../lib/model/role";
 import storage from "../../lib/services/storage";
+import { deepSearchRecordFactory } from "../../lib/util/deep-search";
 
 export default function Breadcrumbs() {
   const router = useRouter();
-  const slug = router.asPath
-  const generateBreadCrumbs = () => {
-    // Remove any query parameters, as those aren't included in breadcrumbs
-    const asPathWithoutQuery = router.asPath.split("?")[0];
+  const path = router.pathname
+  const paths = path.split('/').slice(1);
+  const homePath = '/' + paths.slice(0, 2).join('/');
+  const userRole = storage.role || (router.pathname.split('/')[2] as Role)
+  const pathsWithoutRole = paths.filter(v => v !== 'manager' && v !== 'teacher' && v !== 'student');
+  const hasDetail = pathsWithoutRole[pathsWithoutRole.length - 1] === '[id]'
+  const pathsData = hasDetail?pathsWithoutRole.filter((_,index)=> index !== pathsWithoutRole.length-1):pathsWithoutRole
+  const sideMenu = routes.get(userRole) as SideBarItem[];
 
-    const asPathNestedRoutes = asPathWithoutQuery.split("/")
-      .filter(v => v.length > 0)
-      .filter(v => v !== 'manager' && v !== 'teacher' && v !== 'student' );
-
-    // Iterate over the list of nested route parts and build
-    // a "crumb" object for each one.
-    const crumbList = asPathNestedRoutes.map((subpath, idx) => {
-      // We can get the partial nested route for the crumb
-      // by joining together the path parts up to this point.
-      const href = "/" + asPathNestedRoutes.slice(0, idx + 1).join("/");
-      // The title will just be the route string for now
-      const text = (idx === asPathNestedRoutes.length - 1 && !isNaN(+subpath))
-        ? 'Detail'
-        : subpath[0].toUpperCase() + subpath.substr(1);
-      const isLast = (idx === asPathNestedRoutes.length - 1) ? true : false
-      return { href, text, isLast };
-    })
-
-    // Add in a default "Home" crumb for the top-level
-
-    return (storage.role || (router.pathname.split('/')[2] as Role) === 'manager')
-      ?
-      [{ href: "/", text: "CMS MANAGER SYSTEM", isLast: false }, ...crumbList]
-      :
-      [{ href: "/", text: "CMS DASHBOARD", isLast: false }, ...crumbList]
-  }
   return (
     <Breadcrumb>
-      {generateBreadCrumbs().map((crumb, index) => {
-        return (
-          <Breadcrumb.Item key={index}>
-            {(!crumb.isLast)
-              ?
-              <a href={crumb.href}>{crumb.text}</a>
-              :
-              <span>{crumb.text}</span>
-            }
+      <Breadcrumb.Item key={"crumb_dashboard_" + userRole}>
+        <Link href={homePath}>
+          {`CMS ${userRole.toLocaleUpperCase()} SYSTEM`}
+        </Link>
+      </Breadcrumb.Item>
+
+      {
+        pathsData.map((name,index)=>{
+
+          const record = deepSearchRecordFactory(
+            (nav: SideBarItem, value: any) => nav.label === value,
+            name,
+            'subNav'
+          )(sideMenu);
+          
+          const { navs }: { source: SideBarItem[], navs: SideBarItem[] } = record.reduce(
+            (acc: { source: string | any[]; navs: any; }, cur: any) => {
+              const item = acc.source[acc.source.length + cur];
+  
+              return { source: item.subMenu, navs: [...acc.navs, item] };
+            },
+            { source: sideMenu, navs: [] as SideBarItem[]}
+          );
+
+          const isText =
+            index === pathsData.length - 1 || navs.every((item) => item.hideLinkInBreadcrumb);
+
+          const subPath = navs
+            .map((item) => item.path)
+            .reduce((acc, cur) => [...acc, ...cur], [])
+            .filter((item) => !!item)
+            .join('/');
+          
+          return (
+            <Breadcrumb.Item key={index}>
+            {isText ? name : <Link href={`${homePath}/${subPath}`}>{name}</Link>}
           </Breadcrumb.Item>
-        )
-      })}
+          );
+        })
+      }
+      {
+        (hasDetail)
+          ? (
+            <Breadcrumb.Item key={"crumb_dashboard_detail"}>
+              Detail
+            </Breadcrumb.Item>
+            )
+          : null
+      }
+
     </Breadcrumb>
   );
 }

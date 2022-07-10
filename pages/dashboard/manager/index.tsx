@@ -49,7 +49,7 @@ const Home: NextPage = () => {
     //   const { data } = res;
     //   if (data) {
     //     setStudentStatistics(data);
-    //     console.log(data);
+    //     // console.log(data);
     //   }
     // });
 
@@ -57,17 +57,17 @@ const Home: NextPage = () => {
     //   const { data } = res;
     //   if (data) {
     //     setTeacherStatistics(data);
-    //     console.log(data);
+    //     // console.log(data.skills);
     //   }
     // });
 
-    apiService.getStatistics<Course & Schedule, CourseClassTimeStatistic>('course').then((res) => {
-      const { data } = res;
-      if (data) {
-        setCourseStatistics(data);
-        console.log(data);
-      }
-    });
+    // apiService.getStatistics<Course & Schedule, CourseClassTimeStatistic>('course').then((res) => {
+    //   const { data } = res;
+    //   if (data) {
+    //     setCourseStatistics(data);
+    //     console.log(data);
+    //   }
+    // });
   }, [])
 
   return (

@@ -3,6 +3,7 @@
         "antd",
         "highcharts",
         "highmaps",
+        "navs",
         "Sider"
     ]
 }

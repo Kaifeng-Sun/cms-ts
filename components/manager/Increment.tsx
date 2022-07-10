@@ -6,10 +6,9 @@ import React, { useEffect } from 'react'
 export default function IncrementChart(props: any) {
   const { studentData, teacherData, courseData } = props
   const lineChartData = (data: { name: string, amount: number }[]) => {
-    let monthData = new Array(12)
-    monthData.fill(0)
+    let monthData = new Array(12).fill(0)
     if (!!data) {
-      data.map(item => {
+      data.forEach(item => {
         const currentYear = new Date().getFullYear()
         const year = +item.name.split("-")[0]
         const month = +item.name.split("-")[1]
@@ -22,7 +21,7 @@ export default function IncrementChart(props: any) {
 
     return monthData
   }
-  
+
   const chartOptions = {
     xAxis: {
       categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
