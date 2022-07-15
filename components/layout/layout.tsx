@@ -42,7 +42,7 @@ function renderMenuItems(data: SideBarItem[], parent = '') {
         </Menu.SubMenu>
       );
     }
-     else {
+    else {
       return item.hide ? null : (
         <Menu.Item key={key} title={item.label} icon={item.icon}>
           {!!item.path.length || item.label.toLocaleLowerCase() === 'overview' ? (

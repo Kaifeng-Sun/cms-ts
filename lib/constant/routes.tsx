@@ -20,7 +20,7 @@ export interface SideBarItem {
   path: string[];
   subMenu?: SideBarItem[];
   hide?: boolean;
-  isLast?:boolean;
+  isLast?: boolean;
   hideLinkInBreadcrumb?: boolean; // 当前面包屑上的链接是否应该被隐藏
 }
 
@@ -38,25 +38,25 @@ export enum RoutePath {
 const students: SideBarItem = {
   path: [RoutePath.students],
   label: 'Student',
-  icon: <SolutionOutlined/>,
-  isLast:false,
-  hideLinkInBreadcrumb: true,
+  icon: <SolutionOutlined />,
+  isLast: false,
+  hideLinkInBreadcrumb: false,
 
-  subMenu: [{ path: [''], label: 'Student List', icon: <TeamOutlined />, isLast:true }],
+  subMenu: [{ path: [''], label: 'Student List', icon: <TeamOutlined />, isLast: true }],
 };
 
 const teachers: SideBarItem = {
   path: [RoutePath.teachers],
   label: 'Teacher',
   icon: <DeploymentUnitOutlined />,
-  isLast:false,
+  isLast: false,
   hideLinkInBreadcrumb: true,
   subMenu: [
     {
       path: [''],
       label: 'Teacher List',
       icon: <TeamOutlined />,
-      isLast:true
+      isLast: true
     },
   ],
 };
@@ -65,12 +65,12 @@ const courses: SideBarItem = {
   path: [RoutePath.courses],
   label: 'Course',
   icon: <ReadOutlined />,
-  isLast:false,
+  isLast: false,
   hideLinkInBreadcrumb: true,
   subMenu: [
-    { path: [''], label: 'All Courses', icon: <ProjectOutlined />, isLast:true },
-    { path: [RoutePath.addCourse], label: 'Add Course', icon: <FileAddOutlined />, isLast:true },
-    { path: [RoutePath.editCourse], label: 'Edit Course', icon: <EditOutlined />, isLast:true },
+    { path: [''], label: 'All Courses', icon: <ProjectOutlined />, isLast: true },
+    { path: [RoutePath.addCourse], label: 'Add Course', icon: <FileAddOutlined />, isLast: true },
+    { path: [RoutePath.editCourse], label: 'Edit Course', icon: <EditOutlined />, isLast: true },
   ],
 };
 
@@ -78,7 +78,7 @@ const overview: SideBarItem = {
   path: [],
   label: 'Overview',
   icon: <DashboardOutlined />,
-  isLast:true
+  isLast: true
 };
 
 export const routes: Map<Role, SideBarItem[]> = new Map([

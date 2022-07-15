@@ -5,7 +5,7 @@ export const deepSearchRecordFactory = <T>(
   value: any,
   key: string
 ) => {
-  return function search(data: T[], record : number[] = [] ): number[] | null {
+  return function search(data: T[], record : number[] = [] ): number[] {
     const headNode = data.slice(0, 1)[0];
     const restNodes = data.slice(1);
 
@@ -14,6 +14,7 @@ export const deepSearchRecordFactory = <T>(
     if (predicateFn(headNode, value)) {
       return record;
     }
+console.log('headNode',headNode);
 
     if (headNode[key]) {
       const res = search(headNode[key], record);
@@ -35,6 +36,6 @@ export const deepSearchRecordFactory = <T>(
       }
     }
 
-    return null;
+    return [];
   };
 };

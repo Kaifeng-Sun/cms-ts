@@ -15,7 +15,7 @@ export default function Breadcrumbs() {
   const userRole = storage.role || (router.pathname.split('/')[2] as Role)
   const pathsWithoutRole = paths.filter(v => v !== 'manager' && v !== 'teacher' && v !== 'student');
   const hasDetail = pathsWithoutRole[pathsWithoutRole.length - 1] === '[id]'
-  const pathsData = hasDetail?pathsWithoutRole.filter((_,index)=> index !== pathsWithoutRole.length-1):pathsWithoutRole
+  const pathsData = hasDetail ? pathsWithoutRole.filter((_, index) => index !== pathsWithoutRole.length - 1) : pathsWithoutRole
   const sideMenu = routes.get(userRole) as SideBarItem[];
 
   return (
@@ -27,21 +27,21 @@ export default function Breadcrumbs() {
       </Breadcrumb.Item>
 
       {
-        pathsData.map((name,index)=>{
+        pathsData.map((name, index) => {
 
           const record = deepSearchRecordFactory(
             (nav: SideBarItem, value: any) => nav.label === value,
             name,
-            'subNav'
+            'subMenu'
           )(sideMenu);
-          
+
           const { navs }: { source: SideBarItem[], navs: SideBarItem[] } = record.reduce(
-            (acc: { source: string | any[]; navs: any; }, cur: any) => {
+            (acc: { source: SideBarItem[], navs: SideBarItem[] }, cur: any) => {
               const item = acc.source[acc.source.length + cur];
-  
-              return { source: item.subMenu, navs: [...acc.navs, item] };
+
+              return { source: item.subMenu??[], navs: [...acc.navs, item] };
             },
-            { source: sideMenu, navs: [] as SideBarItem[]}
+            { source: sideMenu, navs: [] }
           );
 
           const isText =
@@ -52,11 +52,11 @@ export default function Breadcrumbs() {
             .reduce((acc, cur) => [...acc, ...cur], [])
             .filter((item) => !!item)
             .join('/');
-          
+
           return (
             <Breadcrumb.Item key={index}>
-            {isText ? name : <Link href={`${homePath}/${subPath}`}>{name}</Link>}
-          </Breadcrumb.Item>
+              {isText ? name : <Link href={`${homePath}/${subPath}`}>{name}</Link>}
+            </Breadcrumb.Item>
           );
         })
       }
@@ -66,7 +66,7 @@ export default function Breadcrumbs() {
             <Breadcrumb.Item key={"crumb_dashboard_detail"}>
               Detail
             </Breadcrumb.Item>
-            )
+          )
           : null
       }
 
