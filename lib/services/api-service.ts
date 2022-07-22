@@ -16,7 +16,7 @@ import {
   UpdateStudentResponse 
 } from '../model/student';
 import { Statistic, StatisticsOverviewResponse, StatisticsResponse, StatisticsType } from '../model/statistics';
-import { ClassSchedule } from '../model/courses';
+import { ClassSchedule, CoursesRequest, CoursesResponse } from '../model/courses';
 
 const baseURL = 'http://cms.chtoma.com/api';
 const axiosInstance = axios.create({
@@ -177,6 +177,13 @@ class ApiService extends BaseApiService {
       'https://code.highcharts.com/mapdata/custom/world-palestine-highres.geo.json'
     );
   };
+
+  getCourses(req?: CoursesRequest): Promise<IResponse<CoursesResponse>> {
+    return this.get<IResponse<CoursesResponse>>(
+      RootPath.courses,
+      (req as unknown) as QueryParams
+    );
+  }
 }
 
 export const apiService = new ApiService();

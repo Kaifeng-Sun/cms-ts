@@ -1,3 +1,5 @@
+import { ListResponse } from "./api";
+
 export interface CourseShort {
   id: number;
   name: string;
@@ -36,7 +38,7 @@ export interface Course {
   teacherId: number;
   type: CourseType[];
   ctime: string;
-  createdAt?:string
+  createdAt?: string
   scheduleId: number;
 }
 
@@ -51,4 +53,17 @@ export interface CourseType {
 
 export interface ClassSchedule extends Course {
   schedule: Schedule;
+}
+
+export interface CoursesResponse extends ListResponse {
+  courses: Course[];
+}
+
+export interface CoursesRequest {
+  page?: number;
+  limit?: number;
+  name?: string;
+  uid?: string;
+  typeId?: number;
+  userId?: number;
 }
