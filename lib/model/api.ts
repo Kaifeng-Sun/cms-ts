@@ -20,3 +20,5 @@ export interface ListResponse {
 }
 
 export type DeleteResponse = boolean;
+
+export type RequestOmitPaginator<T> = Omit<T, 'page' | 'limit'>;

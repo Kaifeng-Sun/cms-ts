@@ -16,7 +16,8 @@ import {
   UpdateStudentResponse 
 } from '../model/student';
 import { Statistic, StatisticsOverviewResponse, StatisticsResponse, StatisticsType } from '../model/statistics';
-import { ClassSchedule, CoursesRequest, CoursesResponse } from '../model/courses';
+import { ClassSchedule, Course, CourseDetailResponse, CoursesRequest, CoursesResponse } from '../model/courses';
+import { MessagesRequest, MessagesResponse, MessageStatisticResponse } from '../model/message';
 
 const baseURL = 'http://cms.chtoma.com/api';
 const axiosInstance = axios.create({
@@ -145,8 +146,11 @@ class ApiService extends BaseApiService {
   }
 
   getStudentById(id:number): Promise<IResponse<StudentResponse>> {
-    // return this.get<IResponse<Student>>[RootPath.students, id]
     return this.get<IResponse<Student>>([RootPath.students, id]).then(this.showMessage());
+  }
+
+  getCourseById(id:number): Promise<IResponse<CourseDetailResponse>> {
+    return this.get<IResponse<Course>>([RootPath.courses, SubPath.detail], { id }).then(this.showMessage());
   }
 
   getStatisticsOverview(): Promise<IResponse<StatisticsOverviewResponse>> {
@@ -183,6 +187,22 @@ class ApiService extends BaseApiService {
       RootPath.courses,
       (req as unknown) as QueryParams
     );
+  }
+
+  getMessages(req: MessagesRequest): Promise<IResponse<MessagesResponse>> {
+    return this.get<IResponse<MessagesResponse>>([RootPath.message], { ...req }).then(
+      this.showMessage()
+    );
+  }
+
+  getMessageStatistic(userId?: number): Promise<IResponse<MessageStatisticResponse>> {
+    return this.get<IResponse<MessagesResponse>>(
+      [RootPath.message, SubPath.statistics], userId ? { userId } : undefined
+      ).then(this.showMessage());
+  }
+
+  markAsRead(ids: number[]): Promise<IResponse<boolean>> {
+    return this.put<IResponse<boolean>>([RootPath.message], { status: 1, ids }).then(this.showMessage());
   }
 }
 

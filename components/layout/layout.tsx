@@ -109,12 +109,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
 
   const items1: MenuProps['items'] = [
     {
-      label:
-        <a
-          onClick={onLogOut}
-        >
-          Log Out
-        </a>,
+      label: <a onClick={onLogOut}>Log Out</a>,
       key: 'logout'
     }
   ];

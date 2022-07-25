@@ -25,6 +25,10 @@ export class Storage {
     return this.userInfo?.role!;
   }
 
+  get userId(): number {
+    return +this.userInfo?.userId!;
+  }
+
   deleteUserInfo(): void {
     localStorage.removeItem(this.key);
   }

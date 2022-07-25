@@ -7,6 +7,32 @@ import apiService from "../../../../lib/services/api-service";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Link from "next/link";
 import { useUserRole } from "../../../../components/custom-hooks/login-state";
+import styled from "styled-components";
+import { Gutter } from 'antd/lib/grid/row';
+import { HeartFilled, UserOutlined } from '@ant-design/icons';
+import { DurationUnit } from "../../../../lib/constant/duration";
+import storage from "../../../../lib/services/storage";
+
+const StyledRow = styled(Row)`
+  position: relative;
+  margin: -8px -3px 8px;
+  :after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    background: #f0f0f0;
+    width: 100%;
+    height: 1px; 
+  }
+`;
+const gutter: [Gutter, Gutter] = [6, 16];
+
+const getDuration = (data: Course): string => {
+  const { duration, durationUnit } = data;
+  const text = `${duration} ${DurationUnit[durationUnit]}`;
+
+  return duration > 1 ? text + 's' : text;
+};
 
 export default function Page() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -31,7 +57,7 @@ export default function Page() {
         console.log(data);
       }
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, limit])
 
   return (
@@ -50,20 +76,22 @@ export default function Page() {
           renderItem={item => (
             <List.Item key={`${item.id}_${item.name}`}>
               <Card
-                extra={
-                  <Image height={260} src={item.cover} alt=''/>
+                cover={
+                  <Image src={item.cover} style={{ height: 260 }} alt='' />
                 }
               >
-                <Row>{item.name}</Row>
-                <Row justify="space-between">
+                <Row gutter={gutter}><h3>{item.name}</h3></Row>
+                <StyledRow gutter={gutter} justify="space-between">
                   <Col>{item.createdAt}</Col>
-                  <Col><b>{item.star}</b></Col>
-                </Row>
-                <Row justify="space-between">
+                  <Col><HeartFilled style={{ marginRight: 5, fontSize: 16, color: 'red' }} /><b>{item.star}</b></Col>
+                </StyledRow>
+                <StyledRow gutter={gutter} justify="space-between">
                   <Col>Duration:</Col>
-                  <Col><b>{item.duration} {item.durationUnit}</b></Col>
-                </Row>
-                <Row justify="space-between">
+                  <Col>
+                  <b>{getDuration(item)}</b>
+                  </Col>
+                </StyledRow>
+                <StyledRow gutter={gutter} justify="space-between">
                   <Col>Teacher:</Col>
                   <Col>
                     <b>
@@ -72,12 +100,22 @@ export default function Page() {
                       </Link>
                     </b>
                   </Col>
-                </Row>
-                <Row justify="space-between">
-                  <Col>Student Limit:</Col>
+                </StyledRow>
+                <Row gutter={gutter} justify="space-between">
+                  <Col>
+                    <UserOutlined style={{ marginRight: 5, fontSize: 16, color: '#1890ff' }} />
+                    <span>
+                      Student Limit:
+                    </span>
+
+                  </Col>
                   <Col><b>{item.maxStudents}</b></Col>
                 </Row>
-                <Button type="primary">Read More</Button>
+                <Row style={{ marginTop: '12px' }}>
+                <Link href={`/dashboard/${storage.role}/courses/${item.id}`} passHref>
+                  <Button type="primary">Read More</Button>
+                </Link>
+                </Row>
               </Card>
             </List.Item>
           )}

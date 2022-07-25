@@ -1,5 +1,15 @@
 import { ListResponse } from "./api";
 
+interface Sales {
+  id: number;
+  batches: number;
+  price: number;
+  earnings: number;
+  paidAmount: number;
+  studentAmount: number;
+  paidIds: number[];
+}
+
 export interface CourseShort {
   id: number;
   name: string;
@@ -67,3 +77,10 @@ export interface CoursesRequest {
   typeId?: number;
   userId?: number;
 }
+
+export interface CourseDetail extends Course {
+  sales: Sales;
+  schedule: Schedule;
+}
+
+export type CourseDetailResponse = CourseDetail;

@@ -33,6 +33,7 @@ export enum RoutePath {
   editCourse = 'edit-course',
   schedule = 'schedule',
   profile = 'profile',
+  message = 'message',
 }
 
 const students: SideBarItem = {
@@ -81,6 +82,12 @@ const overview: SideBarItem = {
   isLast: true
 };
 
+const messages: SideBarItem = {
+  path: [RoutePath.message],
+  label: 'Message',
+  icon: <MessageOutlined />
+}
+
 export const routes: Map<Role, SideBarItem[]> = new Map([
-  [Roles.manager, [overview, students, teachers, courses]],
+  [Roles.manager, [overview, students, teachers, courses, messages]],
 ]);
