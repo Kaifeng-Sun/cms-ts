@@ -1,20 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import Head from "next/head";
-import {
-  DashboardOutlined,
-  SolutionOutlined,
-  TeamOutlined,
-  DeploymentUnitOutlined,
-  ProjectOutlined,
-} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, message, Button } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  ReadOutlined,
-  FileAddOutlined,
-  EditOutlined,
 } from '@ant-design/icons';
 import router, { useRouter } from "next/router";
 import apiService from '../../lib/services/api-service';
@@ -161,7 +150,6 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
           <Breadcrumbs/>
           <StyledContent
             className="site-layout-background"
-            // style={{ margin: '24px 16px 0', overflow: 'initial' }}
           >
             {children}
           </StyledContent>
