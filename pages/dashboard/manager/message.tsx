@@ -42,7 +42,7 @@ export default function Page() {
 
     setSource({ ...result });
     setDataSource(flattenResult);
-  }, [data]);
+  }, [data, source]);
 
   return (
     <>

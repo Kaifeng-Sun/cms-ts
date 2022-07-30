@@ -85,7 +85,9 @@ const overview: SideBarItem = {
 const messages: SideBarItem = {
   path: [RoutePath.message],
   label: 'Message',
-  icon: <MessageOutlined />
+  icon: <MessageOutlined />,
+  isLast: true,
+  hideLinkInBreadcrumb: true,
 }
 
 export const routes: Map<Role, SideBarItem[]> = new Map([

@@ -1,4 +1,4 @@
-import { ListResponse } from "./api";
+import { ListResponse, Paginator } from "./api";
 
 interface Sales {
   id: number;
@@ -84,3 +84,41 @@ export interface CourseDetail extends Course {
 }
 
 export type CourseDetailResponse = CourseDetail;
+
+export interface CourseRequest extends Paginator {
+  code?: string;
+  name?: string;
+  type?: number;
+  userId?: number;
+  own?: any; // ?这个字段是多余的，真实的后台可以根据token等鉴定用户权限
+}
+
+export type AddCourseRequest = Pick<
+  Course,
+  | 'cover'
+  | 'detail'
+  | 'duration'
+  | 'durationUnit'
+  | 'maxStudents'
+  | 'name'
+  | 'price'
+  | 'startTime'
+  | 'uid'
+> & { type: number | number[]; teacherId: number };
+
+export type AddCourseResponse = Course;
+
+export interface UpdateCourseRequest {
+  id: number;
+}
+
+export type UpdateCourseResponse = Course;
+
+export interface ScheduleRequest {
+  scheduleId?: number;
+  courseId?: number;
+  current?: number;
+  statue?: number;
+  chapters?: Omit<Chapter, 'id'>[];
+  classTime?: string[];
+}

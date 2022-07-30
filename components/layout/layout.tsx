@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { MenuProps } from 'antd';
+import { MenuProps, Row } from 'antd';
 import { Layout, Menu, message, Button } from "antd";
 import {
   MenuUnfoldOutlined,
@@ -15,6 +15,7 @@ import { routes, SideBarItem } from '../../lib/constant/routes';
 import { getActiveKey } from '../../lib/util/side-nav';
 import { useUserRole } from '../custom-hooks/login-state';
 import styled from 'styled-components';
+import { MessagePanel } from '../common/messagePanel';
 
 const {Header, Content, Sider, Footer } = Layout;
 
@@ -51,7 +52,7 @@ function renderMenuItems(data: SideBarItem[], parent = '') {
       return item.hide ? null : (
         <Menu.Item key={key} title={item.label} icon={item.icon}>
           {!!item.path.length || item.label.toLocaleLowerCase() === 'overview' ? (
-            <Link href={['/dashboard', userRole, parent, ...item.path].join('/')}>
+            <Link href={['/dashboard', userRole, parent, ...item.path].filter((item) => !!item).join('/')} replace>
               {item.label}
             </Link>
           ) : (
@@ -139,12 +140,17 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
               {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </Button>
           </div>
+
+                    <Row align="middle">
+            <MessagePanel />
           <Menu
             theme="dark"
             mode="horizontal"
             items={items1}
             style={{ width: '20%' }}
           />
+            {/* <UserIcon /> */}
+          </Row>
         </StyledLayoutHeader>
         <Layout>
           <Breadcrumbs/>

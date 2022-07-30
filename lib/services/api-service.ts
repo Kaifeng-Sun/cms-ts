@@ -16,8 +16,9 @@ import {
   UpdateStudentResponse 
 } from '../model/student';
 import { Statistic, StatisticsOverviewResponse, StatisticsResponse, StatisticsType } from '../model/statistics';
-import { ClassSchedule, Course, CourseDetailResponse, CoursesRequest, CoursesResponse } from '../model/courses';
+import { AddCourseRequest, AddCourseResponse, ClassSchedule, Course, CourseDetailResponse, CoursesRequest, CoursesResponse, CourseType, Schedule, ScheduleRequest, UpdateCourseRequest, UpdateCourseResponse } from '../model/courses';
 import { MessagesRequest, MessagesResponse, MessageStatisticResponse } from '../model/message';
+import { TeachersRequest, TeachersResponse } from '../model/teacher';
 
 const baseURL = 'http://cms.chtoma.com/api';
 const axiosInstance = axios.create({
@@ -181,12 +182,52 @@ class ApiService extends BaseApiService {
       'https://code.highcharts.com/mapdata/custom/world-palestine-highres.geo.json'
     );
   };
+  
+  addCourse(req: AddCourseRequest): Promise<IResponse<AddCourseResponse>> {
+    return this.post([RootPath.courses], req).then(this.showMessage(true));
+  }
+
+  updateCourse(req: UpdateCourseRequest): Promise<IResponse<UpdateCourseResponse>> {
+    return this.put([RootPath.courses], req).then(this.showMessage(true));
+  }
+  
+  createCourseCode(): Promise<IResponse<string>> {
+    return this.get([RootPath.courses, SubPath.code]).then(this.showMessage());
+  }
+
+  getCourseTypes(): Promise<IResponse<CourseType[]>> {
+    return this.get([RootPath.courses, SubPath.type]).then(this.showMessage());
+  }
 
   getCourses(req?: CoursesRequest): Promise<IResponse<CoursesResponse>> {
     return this.get<IResponse<CoursesResponse>>(
       RootPath.courses,
       (req as unknown) as QueryParams
     );
+  }
+
+  getScheduleById({
+    courseId,
+    scheduleId,
+  }: {
+    courseId?: number;
+    scheduleId?: number;
+  }): Promise<IResponse<Schedule>> {
+    return this.get<IResponse<Schedule>>([RootPath.courses, SubPath.schedule], {
+      courseId,
+      scheduleId,
+    }).then(this.showMessage());
+  }
+
+  updateSchedule(req: ScheduleRequest): Promise<IResponse<boolean>> {
+    return this.put([RootPath.courses, SubPath.schedule], req).then(this.showMessage(true));
+  }
+  
+  getTeachers(req?: TeachersRequest): Promise<IResponse<TeachersResponse>> {
+    return this.get<IResponse<TeachersResponse>>(
+      RootPath.teachers,
+      (req as unknown) as QueryParams
+    ).then(this.showMessage());
   }
 
   getMessages(req: MessagesRequest): Promise<IResponse<MessagesResponse>> {
@@ -203,6 +244,12 @@ class ApiService extends BaseApiService {
 
   markAsRead(ids: number[]): Promise<IResponse<boolean>> {
     return this.put<IResponse<boolean>>([RootPath.message], { status: 1, ids }).then(this.showMessage());
+  }
+
+  messageEvent(): EventSource {
+    return new EventSource(`${baseURL}/message/subscribe?userId=${storage.userId}`, {
+      withCredentials: true,
+    });
   }
 }
 

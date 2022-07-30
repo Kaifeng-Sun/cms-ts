@@ -1,3 +1,5 @@
+import { ListResponse, Paginator } from "./api";
+
 export interface Teacher {
   id: number;
   name: string;
@@ -38,4 +40,12 @@ export interface WorkExperience {
   company: string;
   post: string;
   startEnd: string;
+}
+
+export interface TeachersRequest extends Partial<Paginator> {
+  query?: string;
+}
+
+export interface TeachersResponse extends ListResponse {
+  teachers: Teacher[];
 }
