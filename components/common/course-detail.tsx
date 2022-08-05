@@ -16,6 +16,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import ImgCrop from 'antd-img-crop';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { getBase64 } from '../../lib/util/image-helper';
+import moment from 'moment';
 
 const UploadInner = styled.div`
   display: flex;
@@ -154,8 +155,8 @@ export default function CourseDetail({ course, onSuccess }: AddCourseFormProps) 
     const req: AddCourseRequest = {
       ...values,
       duration: +values.duration.number,
-      startTime: values.startTime && format(values.startTime, 'yyy-MM-dd'),
-      teacherId: +values.teacherId || +course.teacherId,
+      startTime: values.startTime && format(moment(values.startTime, 'yyy-MM-dd').toDate(), 'yyy-MM-dd'),
+      teacherId: +values.teacher || +course.teacherId,
       durationUnit: +values.duration.unit,
     };
     const response = isAdd
@@ -172,17 +173,17 @@ export default function CourseDetail({ course, onSuccess }: AddCourseFormProps) 
     }
   };
 
-  // useEffect(() => {
-  //   if (isAdd) {
-  //     getCode();
-  //   }
+  useEffect(() => {
+    if (isAdd) {
+      getCode();
+    }
 
-  //   apiService.getCourseTypes().then((res) => {
-  //     const { data } = res;
+    apiService.getCourseTypes().then((res) => {
+      const { data } = res;
 
-  //     setCourseTypes(data);
-  //   });
-  // }, [])
+      setCourseTypes(data);
+    });
+  }, [])
 
   useEffect(() => {
     if (!!course) {
@@ -190,10 +191,13 @@ export default function CourseDetail({ course, onSuccess }: AddCourseFormProps) 
         ...course,
         type: course.type.map(item => item.id),
         teacherId: course.teacherName,
-        startTime: new Date(course.startTime),
+        startTime: moment(course.startTime),
         duration: { number: course.duration, unit: course.durationUnit },
       };
 
+      console.log('====================================');
+      console.log(values);
+      console.log('====================================');
       form.setFieldsValue(values);
 
       setFileList([{ name: 'Cover Image', url: course.cover }]);

@@ -9,6 +9,7 @@ import apiService from '../../lib/services/api-service';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Gutter } from 'antd/lib/grid/row';
 import { validateMessages, weekDays } from '../../lib/constant/config';
+import moment from 'moment';
 
 const gutter: [Gutter, Gutter] = [6, 16];
 
@@ -48,6 +49,7 @@ export default function CourseChapter({
       weekday: string;
       time: string;
     }[] = form.getFieldValue(clsTime) || [];
+
     let result = selected.map((item) => item?.weekday);
 
     if (namePath) {
@@ -58,6 +60,7 @@ export default function CourseChapter({
 
     setSelectedWeekdays(result);
   };
+
   const onFinish = (values: ChapterFormValue) => {
     if (!courseId && !scheduleId) {
       message.error('You must select a course to update!');
@@ -65,7 +68,9 @@ export default function CourseChapter({
     }
 
     const { classTime: origin, chapters } = values;
-    const classTime = origin.map(({ weekday, time }) => `${weekday} ${format(time, 'hh:mm:ss')}`);
+    console.log(origin);
+    
+    const classTime = origin.map(({ weekday, time }) => `${weekday} ${format(moment(time, 'hh:mm:ss').toDate(), 'hh:mm:ss')}`);
     const req: ScheduleRequest = {
       chapters: chapters.map((item, index) => ({ ...item, order: index + 1 })),
       classTime,
@@ -98,7 +103,7 @@ export default function CourseChapter({
         const classTimes = data.classTime.map((item) => {
           const [weekday, time] = item.split(' ');
 
-          return { weekday, time: new Date(`2020-11-11 ${time}`) }; // 日期无所谓，随便设置的
+          return { weekday, time: moment(`2020-11-11 ${time}`) }
         });
 
         form.setFieldsValue({ chapters: data.chapters, classTime: classTimes });
@@ -204,7 +209,17 @@ export default function CourseChapter({
                           }
                         >
                           {weekDays.map((day) => (
-                            <Option key={day} value={day} disabled={selectedWeekdays.includes(day)}>
+                            <Option
+                              key={day}
+                              value={day}
+                              disabled={
+                                selectedWeekdays.includes(day) || 
+                                (
+                                  !!weekDays ?
+                                    weekDays.indexOf(day) < weekDays.indexOf(selectedWeekdays[selectedWeekdays.length - 1])
+                                    : false
+                                )}>
+
                               {day}
                             </Option>
                           ))}
