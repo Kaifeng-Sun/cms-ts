@@ -42,7 +42,9 @@ export default function Page() {
 
     setSource({ ...result });
     setDataSource(flattenResult);
-  }, [data, source]);
+    console.log(result);
+    
+  }, [data]);
 
   return (
     <>
@@ -92,7 +94,7 @@ export default function Page() {
                 </Space>
                 {values.map((item) => (
                   <List.Item
-                    key={item.createdAt}
+                    key={`${item.createdAt}-item`}
                     style={{ opacity: item.status ? 0.4 : 1 }}
                     actions={[<Space key={item.createdAt}>{item.createdAt}</Space>]}
                     extra={
@@ -119,7 +121,7 @@ export default function Page() {
                               }
                             });
                           } catch (err) {
-                            // nothing;
+                            
                           }
 
                           target.status = 1;

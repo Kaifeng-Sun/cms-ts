@@ -34,6 +34,7 @@ export enum RoutePath {
   schedule = 'schedule',
   profile = 'profile',
   message = 'message',
+  own = 'own',
 }
 
 const students: SideBarItem = {
@@ -90,6 +91,32 @@ const messages: SideBarItem = {
   hideLinkInBreadcrumb: true,
 }
 
+const classSchedule: SideBarItem = { 
+  path: [RoutePath.schedule],
+  label: 'Class Schedule',
+  icon: <CalendarOutlined />
+}
+
+const profile: SideBarItem = {
+  path: [RoutePath.profile],
+  label: 'Profile',
+  hide: true,
+  icon: <ProfileOutlined />
+}
+
+const studentCourses: SideBarItem = {
+  path: [RoutePath.courses],
+  label: 'Course',
+  icon: <ReadOutlined />,
+  hideLinkInBreadcrumb: true,
+  subMenu: [
+    { path: [''], label: 'All Courses', icon: <ProjectOutlined /> },
+    { path: [RoutePath.own], label: 'My Courses', icon: <FileAddOutlined /> },
+  ],
+};
+
 export const routes: Map<Role, SideBarItem[]> = new Map([
   [Roles.manager, [overview, students, teachers, courses, messages]],
+  [Roles.teacher, [overview, classSchedule, students, courses, messages]],
+  [Roles.student, [overview, studentCourses, classSchedule, messages]],
 ]);

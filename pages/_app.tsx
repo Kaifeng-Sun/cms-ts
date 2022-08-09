@@ -7,7 +7,7 @@ import { MessageProvider } from '../components/provider';
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-          <Head>
+      <Head>
         <meta charSet="utf-8" />
         <title>Online Education</title>
         <meta key="description" name="description" content="Online Education System" />
@@ -19,9 +19,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <MessageProvider>
         <Component {...pageProps} />
       </MessageProvider>
-    
+
     </>
-    
+
   )
 }
 

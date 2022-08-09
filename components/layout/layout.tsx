@@ -16,6 +16,7 @@ import { getActiveKey } from '../../lib/util/side-nav';
 import { useUserRole } from '../custom-hooks/login-state';
 import styled from 'styled-components';
 import { MessagePanel } from '../common/messagePanel';
+import UserIcon from './user-icon';
 
 const {Header, Content, Sider, Footer } = Layout;
 
@@ -83,26 +84,9 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
   const [collapsed, toggleCollapse] = useState(false);
   const { defaultOpenKeys, defaultSelectedKeys } = getMenuConfig(sideMenu);
 
-  const onLogOut = async () => {
-
-    const { data: isLogout } = await apiService.logout();
-
-    if (isLogout) {
-      storage.deleteUserInfo();
-      router.push('/login');
-    }
-  }
-
   const toggleCollapsed = () => {
     toggleCollapse(!collapsed);
   };
-
-  const items1: MenuProps['items'] = [
-    {
-      label: <a onClick={onLogOut}>Log Out</a>,
-      key: 'logout'
-    }
-  ];
 
   return (
     <Layout
@@ -143,13 +127,7 @@ export default function AppLayout(props: React.PropsWithChildren<any>) {
 
                     <Row align="middle">
             <MessagePanel />
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            items={items1}
-            style={{ width: '20%' }}
-          />
-            {/* <UserIcon /> */}
+            <UserIcon />
           </Row>
         </StyledLayoutHeader>
         <Layout>

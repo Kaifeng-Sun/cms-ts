@@ -19,7 +19,7 @@ import { Statistic, StatisticsOverviewResponse, StatisticsResponse, StatisticsTy
 import { AddCourseRequest, AddCourseResponse, ClassSchedule, Course, CourseDetailResponse, CoursesRequest, CoursesResponse, CourseType, Schedule, ScheduleRequest, UpdateCourseRequest, UpdateCourseResponse } from '../model/courses';
 import { MessagesRequest, MessagesResponse, MessageStatisticResponse } from '../model/message';
 import { TeachersRequest, TeachersResponse } from '../model/teacher';
-
+import { Role } from '../model/role';
 const baseURL = 'http://cms.chtoma.com/api';
 const axiosInstance = axios.create({
   baseURL,
@@ -176,7 +176,13 @@ class ApiService extends BaseApiService {
       userId,
     }).then(this.showMessage());
   }
-
+  
+  getProfileByUserId<T>(userId: number, userRole?: Role): Promise<IResponse<T>> {
+    return this.get<IResponse<T>>([RootPath.profile], {
+      userId,
+      role: userRole || storage.role,
+    }).then(this.showMessage());
+  }
   getWorld = async () => {
     return await axios.get(
       'https://code.highcharts.com/mapdata/custom/world-palestine-highres.geo.json'
@@ -251,6 +257,7 @@ class ApiService extends BaseApiService {
       withCredentials: true,
     });
   }
+  
 }
 
 export const apiService = new ApiService();
